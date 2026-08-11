@@ -7,7 +7,7 @@ listed here before building new. One row per durable thing; keep it terse.
 
 | Surface | Where | Capability |
 |---|---|---|
-| `AuthProvider` / `useAuth()` | `web/src/contexts/AuthContext.tsx` | App auth session — `{ user: { email } | null, signIn(email, password) → boolean, signOut() }`; frontend-only, persisted to localStorage across reloads (BR4). Mounted in the root layout. |
+| `AuthProvider` / `useAuth()` | `web/src/contexts/AuthContext.tsx` | App auth session — `{ user: { email } | null, isHydrated: boolean, signIn(email, password) → boolean, signOut() }`; frontend-only, persisted to localStorage across reloads (BR4), rehydrated via `useSyncExternalStore` (SSR snapshot null → no hydration mismatch). Route guards must wait for `isHydrated` before treating `user: null` as signed-out. Mounted in the root layout. |
 | `seededCredentials` / `matchCredential()` | `web/src/mocks/data/credentials.ts` | Single named seed of mock sign-in email/password pairs (NFR-signin-2); the only place the mock password literal lives. Swap this file when a real auth backend arrives. |
 | `signInSchema` / `SignInInput` | `web/src/lib/validation/schemas.ts` | Zod presence-only validation for the sign-in form (both fields required). |
 | `createUser()` / `User` | `web/src/mocks/data/user.ts` | Canonical seeded team-member identity (email `sam.rivera@taskboard.test`, display name). Shared by both test layers. |
