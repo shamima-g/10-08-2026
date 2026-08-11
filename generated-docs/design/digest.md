@@ -13,7 +13,13 @@ A small team task board: a Board screen with three status columns of task cards,
 
 ## Your Decisions
 
-*Nothing yet — this fills in as you settle things while we build.*
+- **Due-date format:** ISO (e.g. `2026-05-01`). — settled at task-board planning (2026-08-11)
+- **Assignee list source:** a fixed seeded team list (defined in the mock data layer). — 2026-08-11
+- **Initials derivation:** first name + last name initials (e.g. "Jane Doe" → "JD"); single-word names fall back to the first two letters. — 2026-08-11
+- **Reaching Settings:** a link/avatar menu in the app header (the design has no such control; this epic adds it). — 2026-08-11
+- **Delete confirmation:** a confirm step is shown before deleting a task. — 2026-08-11
+- **Field validation:** Title required (Task detail) and display name required (Settings); Assignee / Status / Due date optional. — 2026-08-11
+- **New-task flow:** the "New task" button opens the Task detail screen in an empty create state. — 2026-08-11
 
 ---
 
