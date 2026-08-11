@@ -38,12 +38,27 @@ export const TASK_STATUSES: readonly TaskStatus[] = [
   'Done',
 ];
 
+/** The three Task-detail Priority options (design-update epic §Data Shapes). */
+export type Priority = 'Low' | 'Medium' | 'High';
+
+/**
+ * Priority options in ascending order. Exported so the Task-detail Priority
+ * control and its tests draw from the same canonical list instead of re-listing it.
+ */
+export const TASK_PRIORITIES: readonly Priority[] = ['Low', 'Medium', 'High'];
+
 export interface Task {
   id: string;
   title: string;
   /** User id of the assigned team member (see `seededTeam` / `findTeamMember`). */
   assignee: string;
   status: TaskStatus;
+  /**
+   * Task-detail Priority (design-update epic). Optional per the brief — a stored task
+   * may predate this field; readers fall back to 'Medium' (BR5) and create defaults to
+   * 'Medium' (BR3).
+   */
+  priority?: Priority;
   /** ISO date string, displayed verbatim (e.g. `2026-05-01`) — digest decision. */
   dueDate: string;
 }
@@ -91,6 +106,7 @@ export function createTask(overrides: Partial<Task> = {}): Task {
     title: 'Draft launch email',
     assignee: 'user-1',
     status: 'To do',
+    priority: 'Medium',
     dueDate: '2026-05-01',
     ...overrides,
   };
@@ -104,12 +120,13 @@ export function createTask(overrides: Partial<Task> = {}): Task {
  * current user shows real content.
  */
 export const seededTasks: readonly Task[] = [
-  createTask(), // task-1 — Draft launch email — Sam — To do
+  createTask({ priority: 'High' }), // task-1 — Draft launch email — Sam — To do
   createTask({
     id: 'task-2',
     title: 'Review Q2 roadmap',
     assignee: 'user-2',
     status: 'To do',
+    priority: 'Medium',
     dueDate: '2026-05-03',
   }),
   createTask({
@@ -117,6 +134,7 @@ export const seededTasks: readonly Task[] = [
     title: 'Fix onboarding bug',
     assignee: 'user-3',
     status: 'In progress',
+    priority: 'High',
     dueDate: '2026-05-05',
   }),
   createTask({
@@ -124,6 +142,7 @@ export const seededTasks: readonly Task[] = [
     title: 'Update API docs',
     assignee: 'user-1',
     status: 'In progress',
+    priority: 'Low',
     dueDate: '2026-05-08',
   }),
   createTask({
@@ -131,6 +150,7 @@ export const seededTasks: readonly Task[] = [
     title: 'Ship pricing page',
     assignee: 'user-4',
     status: 'Done',
+    priority: 'Medium',
     dueDate: '2026-04-28',
   }),
   createTask({
@@ -138,6 +158,7 @@ export const seededTasks: readonly Task[] = [
     title: 'Archive old tickets',
     assignee: 'user-2',
     status: 'Done',
+    priority: 'Low',
     dueDate: '2026-04-25',
   }),
 ];

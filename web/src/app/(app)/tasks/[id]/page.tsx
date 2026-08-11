@@ -10,7 +10,7 @@
  * One screen serves BOTH flows (digest §Screens):
  *   - EDIT — opened from a Board card; the route id is the task id, loaded via the
  *     API client (`getTask` → `@/lib/api/client`, CLAUDE.md §2 — never `fetch()`).
- *   - CREATE — opened from the Board's "New task" button, which routes to the
+ *   - CREATE — opened from the Board's "Add task" button, which routes to the
  *     `/tasks/new` sentinel; the form starts empty with Status defaulting to
  *     "To do" (resolved design choice / BR7).
  *
@@ -37,7 +37,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { createTask, deleteTask, getTask, updateTask } from '@/lib/api/tasks';
-import { TASK_STATUSES, seededTeam, type TaskStatus } from '@/mocks/data/task';
+import {
+  TASK_PRIORITIES,
+  TASK_STATUSES,
+  seededTeam,
+  type Priority,
+  type TaskStatus,
+} from '@/mocks/data/task';
 import {
   resolveDisplayName,
   useDisplayNameOverrides,
@@ -94,6 +100,9 @@ export default function TaskDetailPage() {
   const [title, setTitle] = useState('');
   const [assignee, setAssignee] = useState(isCreate ? currentUserId : '');
   const [status, setStatus] = useState<TaskStatus>('To do');
+  // Priority defaults to 'Medium' on create (BR3); an edited task with no stored
+  // priority also reads back as 'Medium' (BR5), so the dropdown is never empty.
+  const [priority, setPriority] = useState<Priority>('Medium');
   const [dueDate, setDueDate] = useState('');
   // Create is immediately ready; edit stays in its loading state until the fetch
   // resolves so the form never flashes empty over a real task's values.
@@ -123,6 +132,8 @@ export default function TaskDetailPage() {
         setTitle(task.title);
         setAssignee(task.assignee);
         setStatus(task.status);
+        // A task seeded before this epic carries no priority — read it as 'Medium' (BR5).
+        setPriority(task.priority ?? 'Medium');
         setDueDate(task.dueDate);
         setLoaded(true);
       })
@@ -157,7 +168,9 @@ export default function TaskDetailPage() {
     setTitleError(null);
     setSaving(true);
 
-    const input = { title: trimmedTitle, assignee, status, dueDate };
+    // Priority is always sent explicitly (default 'Medium') so the value is never
+    // dropped from the create/update payload (BR3/BR4).
+    const input = { title: trimmedTitle, assignee, status, priority, dueDate };
     try {
       if (isCreate) {
         await createTask(input);
@@ -272,6 +285,28 @@ export default function TaskDetailPage() {
             </SelectTrigger>
             <SelectContent>
               {TASK_STATUSES.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Priority — defaults to 'Medium' (BR3); same Select pattern as Status. */}
+        <div className="space-y-2">
+          <span id="priority-label" className={FIELD_LABEL}>
+            Priority
+          </span>
+          <Select
+            value={priority}
+            onValueChange={(value) => setPriority(value as Priority)}
+          >
+            <SelectTrigger className="w-full" aria-labelledby="priority-label">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TASK_PRIORITIES.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
                 </SelectItem>

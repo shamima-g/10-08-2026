@@ -69,14 +69,14 @@ async function signIn(page: Page): Promise<void> {
 }
 
 /**
- * The "New task" control on the board. Whether it renders as a link or a button is
+ * The "Add task" control on the board. Whether it renders as a link or a button is
  * a valid accessible choice, so match either — `.or()` is Playwright's sanctioned
  * either-locator, not a forbidden `||` query fallback.
  */
 function newTaskControl(page: Page): Locator {
   return page
-    .getByRole('button', { name: /new task/i })
-    .or(page.getByRole('link', { name: /new task/i }));
+    .getByRole('button', { name: /add task/i })
+    .or(page.getByRole('link', { name: /add task/i }));
 }
 
 /** A board task card addressed by its title (link or button — either is accessible). */
@@ -98,7 +98,7 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
   });
 
   // AC-2
-  test('creating a task from "New task" opens an empty form and adds the card to the board', async ({
+  test('creating a task from "Add task" opens an empty form and adds the card to the board', async ({
     page,
   }) => {
     await signIn(page);
@@ -191,6 +191,14 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
   test('the task detail screen has no accessibility violations', async ({
     page,
   }) => {
+    // Disable Radix entrance animations (fade + zoom) for this scan. Without this,
+    // axe can analyze the delete-confirm dialog mid-entrance, while its content is
+    // still composited over the overlay tint — measuring a transient ~4.34 contrast
+    // for muted-foreground text that passes (~4.6) once the dialog settles on its
+    // solid popover background. Reduced motion makes the content reach its final
+    // opacity/background immediately, so the scan measures the true settled state.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+
     await signIn(page);
 
     // Empty create state.
@@ -206,9 +214,13 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
     const edit = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
     expect(edit.violations).toEqual([]);
 
-    // Open delete-confirm dialog.
+    // Open delete-confirm dialog. Wait for it to be fully settled at final opacity
+    // (belt-and-braces alongside reduced motion) so axe scans the solid popover
+    // background, never a mid-animation composited one — no bare waitForTimeout.
     await page.getByRole('button', { name: /delete task/i }).click();
-    await expect(page.getByRole('alertdialog')).toBeVisible();
+    const alertDialog = page.getByRole('alertdialog');
+    await expect(alertDialog).toBeVisible();
+    await expect(alertDialog).toHaveCSS('opacity', '1');
     const dialog = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
     expect(dialog.violations).toEqual([]);
   });

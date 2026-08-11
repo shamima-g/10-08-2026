@@ -20,15 +20,15 @@
  *     source of truth this spec also imports — response bodies never drift).
  *   - The assignee filter is a Shadcn Select (role "combobox" trigger, role
  *     "option" items) driven by client-side state — no page reload (NFR-1).
- *   - "New task" and a task card navigate to the routed Task-detail surface inside
- *     the shared (app) shell; on that surface the Board's "New task" action is not
+ *   - "Add task" and a task card navigate to the routed Task-detail surface inside
+ *     the shared (app) shell; on that surface the Board's "Add task" action is not
  *     present and the task's Title is an editable field labelled "Title" (R2).
  *   - A signed-out visit to the protected board is redirected to "/sign-in" by the
  *     shared (app) layout's route guard (AC-6).
  * - If the implementation diverges from these assumptions, this spec will not pass.
  *
  * E2E spec for Epic task-board, Story 1: Board with columns, cards, assignee
- * filter, and New task.
+ * filter, and Add task.
  * playwright.config.ts's webServer block boots the FRONTEND dev server only; auth
  * and data are the app's compiled-in mock layer (MSW + seeded credentials), so no
  * live backend is contacted and no real credentials are needed.
@@ -77,7 +77,7 @@ async function signIn(page: Page): Promise<void> {
   await expect(page).toHaveURL('/');
 }
 
-test.describe('Epic task-board, Story 1: Board with columns, cards, assignee filter, and New task', () => {
+test.describe('Epic task-board, Story 1: Board with columns, cards, assignee filter, and Add task', () => {
   test.beforeEach(async ({ context }) => {
     await context.clearCookies();
   });
@@ -122,15 +122,15 @@ test.describe('Epic task-board, Story 1: Board with columns, cards, assignee fil
   });
 
   // AC-4
-  test('the "New task" button opens the task screen ready to create a new task', async ({
+  test('the "Add task" button opens the task screen ready to create a new task', async ({
     page,
   }) => {
     await signIn(page);
-    await page.getByRole('button', { name: /new task/i }).click();
+    await page.getByRole('button', { name: /add task/i }).click();
 
-    // We left the board (its "New task" action is gone) and reached the task
+    // We left the board (its "Add task" action is gone) and reached the task
     // screen in a create state — the Title field is present and empty.
-    await expect(page.getByRole('button', { name: /new task/i })).toBeHidden();
+    await expect(page.getByRole('button', { name: /add task/i })).toBeHidden();
     await expect(page.getByLabel(/title/i)).toHaveValue('');
   });
 
@@ -144,8 +144,8 @@ test.describe('Epic task-board, Story 1: Board with columns, cards, assignee fil
     await page.getByText(card.title).click();
 
     // The detail screen loads THAT task's values — its Title populates the
-    // editable Title field — and the board's "New task" action is gone.
-    await expect(page.getByRole('button', { name: /new task/i })).toBeHidden();
+    // editable Title field — and the board's "Add task" action is gone.
+    await expect(page.getByRole('button', { name: /add task/i })).toBeHidden();
     await expect(page.getByLabel(/title/i)).toHaveValue(card.title);
   });
 

@@ -1,7 +1,10 @@
-/* TaskBoard design tokens — brand colours and type. Part of the design. */
+/* TaskBoard design tokens — UPDATED (Phase 2 / #15).
+   NOTE: --color-primary is deliberately changed to purple here, which CONFLICTS with the
+   blue decision recorded during the first build. The workflow should ask which wins, not
+   silently switch. */
 :root {
-  --color-primary: #2563eb;   /* buttons, active column header */
-  --color-primary-hover: #1d4ed8;
+  --color-primary: #7c3aed;   /* was #2563eb — conflicts with the recorded decision */
+  --color-primary-hover: #6d28d9;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-text: #0f172a;

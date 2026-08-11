@@ -7,7 +7,7 @@ A small team task board: a Board screen with three status columns of task cards,
 | Read from | `documentation/design/design-notes.md`, `documentation/design/mockup.html`, `documentation/design/tokens.css` |
 | Artifact verdict | design — three screens, a full palette, and typography all comprehended cleanly from text + markup + tokens |
 | Interpreter confidence | high |
-| Last updated | 2026-08-11T10:50:00Z |
+| Last updated | 2026-08-11T10:15:00Z |
 
 ---
 
@@ -19,7 +19,8 @@ A small team task board: a Board screen with three status columns of task cards,
 - **Reaching Settings:** a link/avatar menu in the app header (the design has no such control; this epic adds it). — 2026-08-11
 - **Delete confirmation:** a confirm step is shown before deleting a task. — 2026-08-11
 - **Field validation:** Title required (Task detail) and display name required (Settings); Assignee / Status / Due date optional. — 2026-08-11
-- **New-task flow:** the "New task" button opens the Task detail screen in an empty create state. — 2026-08-11
+- **New-task flow:** the "New task" button (now labelled "Add task") opens the Task detail screen in an empty create state. — 2026-08-11
+- **Primary colour stays blue `#2563eb` (hover `#1d4ed8`).** The 2026-08-11 design update set `tokens.css` primary to purple `#7c3aed`, which conflicts with this recorded decision. Resolved: the earlier blue decision wins; the design's purple is NOT applied. — reaffirmed at the design-update (2026-08-11)
 
 ---
 
@@ -28,11 +29,11 @@ A small team task board: a Board screen with three status columns of task cards,
 ### Board
 
 - **Purpose:** The landing screen. See all tasks grouped by status, filter by assignee, and start a new task.
-- **Layout:** A top header row with the assignee filter at top-left and the primary action button at top-right. Below it, three equal-width columns side by side — **To do**, **In progress**, **Done** — each with a column heading and a stack of task cards. Each card shows the task title and the assignee's initials. An empty column shows placeholder copy instead of cards.
+- **Layout:** A top header row, right-aligned, with the assignee filter and the primary action button grouped together at the top-right (filter first, then the button). Below it, three equal-width columns side by side — **To do**, **In progress**, **Done** — each with a column heading and a stack of task cards. Each card shows the task title and the assignee's initials. An empty column shows placeholder copy instead of cards.
 - **Fields:** Assignee filter — a dropdown labelled **All assignees** (its default/all option is also **All assignees**).
 - **Validation:** None specified.
-- **Navigation:** **New task** (top-right button) → Task detail (create a new task); clicking a task card → Task detail (edit that task). How Settings is reached is not shown (see Uncertainties).
-- **Copy:** Column headings **To do**, **In progress**, **Done**; primary button **New task**; filter label **All assignees**; empty-column copy **Nothing here yet**.
+- **Navigation:** **Add task** (top-right button) → Task detail (create a new task); clicking a task card → Task detail (edit that task). How Settings is reached is not shown (see Uncertainties).
+- **Copy:** Column headings **To do**, **In progress**, **Done**; primary button **Add task**; filter label **All assignees**; empty-column copy **Nothing here yet**.
 
 ### Task detail
 
@@ -42,10 +43,11 @@ A small team task board: a Board screen with three status columns of task cards,
   - **Title** — text input
   - **Assignee** — dropdown (options not enumerated in the design; see Uncertainties)
   - **Status** — dropdown with options **To do**, **In progress**, **Done**
+  - **Priority** — dropdown with options **Low**, **Medium**, **High**
   - **Due date** — date input
 - **Validation:** None specified.
-- **Navigation:** **Save changes** → returns to Board (implied); **Delete task** → removes the task and returns to Board (implied; any confirmation step is unspecified — see Uncertainties). Opened from a Board card, or from **New task**.
-- **Copy:** Field labels **Title**, **Assignee**, **Status**, **Due date**; status options **To do** / **In progress** / **Done**; button **Save changes**; text link **Delete task**.
+- **Navigation:** **Save changes** → returns to Board (implied); **Delete task** → removes the task and returns to Board (implied; any confirmation step is unspecified — see Uncertainties). Opened from a Board card, or from **Add task**.
+- **Copy:** Field labels **Title**, **Assignee**, **Status**, **Priority**, **Due date**; status options **To do** / **In progress** / **Done**; priority options **Low** / **Medium** / **High**; button **Save changes**; text link **Delete task**.
 
 ### Settings
 
@@ -62,7 +64,7 @@ A small team task board: a Board screen with three status columns of task cards,
 
 | Token | Value | Where found |
 |---|---|---|
-| Primary (buttons, active column header) | `#2563eb` | `documentation/design/tokens.css` (`--color-primary`) |
+| Primary (buttons, active column header) | `#2563eb` | `documentation/design/tokens.css` (`--color-primary`) — the 2026-08-11 update set this to purple `#7c3aed`; **conflict RESOLVED in favour of the recorded blue `#2563eb`** (see Your Decisions). Purple not applied. |
 | Primary hover | `#1d4ed8` | `tokens.css` (`--color-primary-hover`) |
 | Background (light) | `#f8fafc` | `tokens.css` (`--color-bg`) |
 | Surface | `#ffffff` | `tokens.css` (`--color-surface`) |
@@ -79,7 +81,7 @@ A small team task board: a Board screen with three status columns of task cards,
 
 ## Data Shapes
 
-- **Task** — id (implied), title (text), assignee (a person), status (one of **To do** / **In progress** / **Done**), due date (date). The Board card renders the assignee as initials.
+- **Task** — id (implied), title (text), assignee (a person), status (one of **To do** / **In progress** / **Done**), priority (one of **Low** / **Medium** / **High**), due date (date). The Board card renders the assignee as initials.
 - **Assignee / User** — display name (set on Settings), initials (shown on cards; derivation from the display name is unspecified — see Uncertainties). The Board assignee filter and the Task detail Assignee dropdown both draw from a set of assignees whose source is not specified.
 
 All data shapes are inferred from the screens; no schema or data-model file shipped with the design.
@@ -111,3 +113,4 @@ All data shapes are inferred from the screens; no schema or data-model file ship
 - **Validation rules.** No validation or error messages are specified for any field (e.g. is Title required?). Confirm expected rules and error text.
 - **New task flow.** Assumed to open Task detail in a create/empty state; confirm this is the intended flow.
 - **Backend / persistence.** The design implies stored tasks and a saved display name but names no API or data source; confirm where data is read from and written to.
+- **CONFLICT: Primary colour — updated design vs. recorded decision.** The updated `tokens.css` sets the primary colour to purple `#7c3aed` (with hover `#6d28d9`), but the decision recorded during the first build keeps primary blue `#2563eb` (hover `#1d4ed8`). The palette above is left on blue pending resolution — do NOT switch silently. Which colour should the app use?
