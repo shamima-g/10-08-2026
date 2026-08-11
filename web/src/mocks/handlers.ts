@@ -13,7 +13,7 @@ import { API_BASE_URL } from '@/lib/utils/constants';
 import { seededTasks } from './data/task';
 
 import type { HttpHandler } from 'msw';
-import type { Task, TaskStatus } from './data/task';
+import type { Priority, Task, TaskStatus } from './data/task';
 
 /**
  * Mock task endpoints (project.md §Data Source — mock-only, no backend).
@@ -44,6 +44,7 @@ interface TaskInputBody {
   title?: string;
   assignee?: string;
   status?: TaskStatus;
+  priority?: Priority;
   dueDate?: string;
 }
 
@@ -53,13 +54,14 @@ export const handlers: HttpHandler[] = [
     return HttpResponse.json(taskStore);
   }),
 
-  // GET /v1/tasks/:id — a single task (Task detail).
+  // GET /v1/tasks/:id — a single task (Task detail). A task with no stored
+  // priority reads back as 'Medium' (BR5) so the detail form is never empty.
   http.get(`${TASKS_URL}/:id`, ({ params }) => {
     const task = taskStore.find((t) => t.id === params.id);
     if (!task) {
       return new HttpResponse(null, { status: 404 });
     }
-    return HttpResponse.json(task);
+    return HttpResponse.json({ ...task, priority: task.priority ?? 'Medium' });
   }),
 
   // POST /v1/tasks — create a task; the store assigns its id (BR7).
@@ -70,6 +72,8 @@ export const handlers: HttpHandler[] = [
       title: body.title ?? '',
       assignee: body.assignee ?? '',
       status: body.status ?? 'To do',
+      // Priority defaults to 'Medium' when the create body omits it (BR3).
+      priority: body.priority ?? 'Medium',
       dueDate: body.dueDate ?? '',
     };
     taskStore.push(task);

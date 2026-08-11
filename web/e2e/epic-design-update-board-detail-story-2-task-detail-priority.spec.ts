@@ -48,8 +48,17 @@ import type { Page, Locator } from '@playwright/test';
 /** The seeded task edited here (task-1 — "Draft launch email", seeded Priority High). */
 const targetTask = seededTasks[0];
 
-/** A Priority distinct from the seed, so the assertion proves the change persisted. */
+// `priority` is optional on Task (a stored task may predate the field), but the
+// seeded task edited here always carries one — assert it so the assertions below
+// stay strict (a defined string, never `undefined`).
 const originalPriority = targetTask.priority;
+if (!originalPriority) {
+  throw new Error(
+    'Test fixture expects the seeded task to carry a Priority so the change is observable.',
+  );
+}
+
+/** A Priority distinct from the seed, so the assertion proves the change persisted. */
 const newPriority = TASK_PRIORITIES.find((p) => p !== originalPriority);
 if (!newPriority) {
   throw new Error(
