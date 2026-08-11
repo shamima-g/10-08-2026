@@ -1,0 +1,14 @@
+/* TaskBoard design tokens — brand colours and type. Part of the design. */
+:root {
+  --color-primary: #2563eb;   /* buttons, active column header */
+  --color-primary-hover: #1d4ed8;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-done: #16a34a;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --radius: 8px;
+  --space: 16px;
+}

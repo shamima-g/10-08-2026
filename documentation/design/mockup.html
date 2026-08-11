@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TaskBoard — mockup</title>
+    <link rel="stylesheet" href="tokens.css" />
+  </head>
+  <body style="font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text)">
+    <!-- SCREEN: Board -->
+    <main data-screen="board">
+      <header style="display: flex; justify-content: space-between; align-items: center">
+        <label>All assignees <select><option>All assignees</option></select></label>
+        <button style="background: var(--color-primary); color: #fff">New task</button>
+      </header>
+      <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space)">
+        <div data-column="To do">
+          <h2>To do</h2>
+          <article class="card"><span class="title">Draft launch email</span><span class="assignee">JD</span></article>
+        </div>
+        <div data-column="In progress">
+          <h2>In progress</h2>
+          <p class="empty">Nothing here yet</p>
+        </div>
+        <div data-column="Done">
+          <h2 style="color: var(--color-done)">Done</h2>
+          <p class="empty">Nothing here yet</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- SCREEN: Task detail -->
+    <main data-screen="task-detail" hidden>
+      <label>Title <input type="text" /></label>
+      <label>Assignee <select></select></label>
+      <label>Status <select><option>To do</option><option>In progress</option><option>Done</option></select></label>
+      <label>Due date <input type="date" /></label>
+      <button style="background: var(--color-primary); color: #fff">Save changes</button>
+      <a href="#">Delete task</a>
+    </main>
+
+    <!-- SCREEN: Settings -->
+    <main data-screen="settings" hidden>
+      <h1>Your settings</h1>
+      <label>Your display name <input type="text" /></label>
+      <button style="background: var(--color-primary); color: #fff">Save</button>
+    </main>
+  </body>
+</html>
