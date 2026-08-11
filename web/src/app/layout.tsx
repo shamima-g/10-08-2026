@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ToastContainer } from '@/components/toast/ToastContainer';
+import { MockProvider } from '@/components/MockProvider';
 
 export const metadata: Metadata = {
   title: 'Next.js Application Template',
@@ -18,8 +20,12 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <ToastProvider>
-          <main className="min-h-screen">{children}</main>
-          <ToastContainer />
+          <AuthProvider>
+            <main className="min-h-screen">
+              <MockProvider>{children}</MockProvider>
+            </main>
+            <ToastContainer />
+          </AuthProvider>
         </ToastProvider>
       </body>
     </html>

@@ -45,6 +45,22 @@ export const simplePasswordSchema = z
   .min(8, 'Password must be at least 8 characters');
 
 /**
+ * Sign-in credential schema (epic "sign-in", Story 1).
+ *
+ * Both fields are required (brief BR1). The password is NOT run through
+ * `passwordSchema`'s strength rules here: this validates a *submitted*
+ * credential for presence, not a newly-chosen password's strength — the seeded
+ * mock password may not meet those rules, and any strength complaint would also
+ * leak which field was wrong (brief BR2). Presence-only, generic message.
+ */
+export const signInSchema = z.object({
+  email: z.string().trim().min(1, 'Email is required'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+export type SignInInput = z.infer<typeof signInSchema>;
+
+/**
  * User ID validation schema
  * Validates MongoDB ObjectId or UUID format
  */

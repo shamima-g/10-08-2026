@@ -89,5 +89,10 @@
     "uuid": "^11.1.1",
     "sharp": "^0.35.0",
     "@hono/node-server": "^2.0.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
