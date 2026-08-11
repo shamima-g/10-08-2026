@@ -69,14 +69,14 @@ async function signIn(page: Page): Promise<void> {
 }
 
 /**
- * The "New task" control on the board. Whether it renders as a link or a button is
+ * The "Add task" control on the board. Whether it renders as a link or a button is
  * a valid accessible choice, so match either — `.or()` is Playwright's sanctioned
  * either-locator, not a forbidden `||` query fallback.
  */
 function newTaskControl(page: Page): Locator {
   return page
-    .getByRole('button', { name: /new task/i })
-    .or(page.getByRole('link', { name: /new task/i }));
+    .getByRole('button', { name: /add task/i })
+    .or(page.getByRole('link', { name: /add task/i }));
 }
 
 /** A board task card addressed by its title (link or button — either is accessible). */
@@ -98,7 +98,7 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
   });
 
   // AC-2
-  test('creating a task from "New task" opens an empty form and adds the card to the board', async ({
+  test('creating a task from "Add task" opens an empty form and adds the card to the board', async ({
     page,
   }) => {
     await signIn(page);

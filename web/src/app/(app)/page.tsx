@@ -131,27 +131,32 @@ export default function Board() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        {/* Filter (top-left). A role="combobox" trigger does not take its
-            accessible name from its shown value, so name it explicitly (WCAG 4.1.2
-            button-name). 2.5.3 Label-in-Name does not apply — combobox has no
-            name-from-content, so there is no visible text label to conflict with. */}
-        <Select value={assignee} onValueChange={setAssignee}>
-          <SelectTrigger className="w-56" aria-label="Filter by assignee">
-            <SelectValue placeholder="All assignees" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_ASSIGNEES}>All assignees</SelectItem>
-            {seededTeam.map((member) => (
-              <SelectItem key={member.id} value={member.id}>
-                {resolveDisplayName(member)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="mb-8 flex flex-wrap items-center justify-end gap-4">
+        {/* Filter and primary action are grouped together at the top-right of the
+            header, filter first (R2/NFR-1). The inner group keeps them clustered as
+            one unit that reflows together across breakpoints. */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Assignee filter. A role="combobox" trigger does not take its accessible
+              name from its shown value, so name it explicitly (WCAG 4.1.2
+              button-name). 2.5.3 Label-in-Name does not apply — combobox has no
+              name-from-content, so there is no visible text label to conflict with. */}
+          <Select value={assignee} onValueChange={setAssignee}>
+            <SelectTrigger className="w-56" aria-label="Filter by assignee">
+              <SelectValue placeholder="All assignees" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_ASSIGNEES}>All assignees</SelectItem>
+              {seededTeam.map((member) => (
+                <SelectItem key={member.id} value={member.id}>
+                  {resolveDisplayName(member)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {/* Primary action (top-right) → Task detail in create state (BR7). */}
-        <Button onClick={() => router.push('/tasks/new')}>New task</Button>
+          {/* Primary action → Task detail in create state (BR1). */}
+          <Button onClick={() => router.push('/tasks/new')}>Add task</Button>
+        </div>
       </div>
 
       {loadError ? (
