@@ -27,6 +27,10 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { seededTeam } from '@/mocks/data/task';
 import { getInitials } from '@/lib/initials';
+import {
+  resolveDisplayName,
+  useDisplayNameOverrides,
+} from '@/lib/user/display-name-store';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -40,6 +44,8 @@ import {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, isHydrated, signOut } = useAuth();
+  // Re-render the header when the signed-in user renames themselves (BR8/NFR-2).
+  useDisplayNameOverrides();
 
   // Route guard: once rehydration has settled, a signed-out visitor is sent to
   // the sign-in screen. `replace` (not `push`) so the protected URL doesn't
@@ -75,7 +81,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   // email so a later Settings rename propagates here (BR8/NFR-2). Fall back to the
   // email when no seeded match exists.
   const member = seededTeam.find((teammate) => teammate.email === user.email);
-  const displayName = member?.displayName ?? user.email;
+  const displayName = member ? resolveDisplayName(member) : user.email;
   const initials = getInitials(displayName);
 
   function handleSignOut() {

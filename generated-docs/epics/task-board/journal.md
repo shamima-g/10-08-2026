@@ -8,3 +8,7 @@
 ## Story 2 — Task detail (view, edit, move, create, delete)
 - The mock task store now supports create, edit, move, and delete. It keeps your changes as you move between the board and a task within a session, but it's an in-memory stand-in (no real backend yet), so a full browser refresh resets it to the starting tasks.
 - Delete asks for confirmation (a dialog) before removing a task; the delete control is hidden while creating a brand-new task.
+
+## Story 3 — Settings (display name)
+- The Settings "Save" writes the new display name into an in-memory store (mock-only, no backend to send it to — mirrors how sign-in keeps the session in the browser). The name and derived initials update everywhere the person appears on the board for the rest of the session; a full browser refresh resets it, as expected for the mock-only setup.
+- This resolved the earlier open item where the header/board name was fixed to the seeded value — a saved display name now propagates live.

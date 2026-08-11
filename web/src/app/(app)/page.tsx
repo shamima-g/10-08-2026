@@ -31,6 +31,10 @@ import {
   type TaskStatus,
 } from '@/mocks/data/task';
 import { getInitials } from '@/lib/initials';
+import {
+  resolveDisplayName,
+  useDisplayNameOverrides,
+} from '@/lib/user/display-name-store';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -65,6 +69,8 @@ function headingId(status: TaskStatus): string {
 
 export default function Board() {
   const router = useRouter();
+  // Re-render cards and the assignee filter when a user is renamed (BR8/NFR-2).
+  useDisplayNameOverrides();
 
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -136,7 +142,7 @@ export default function Board() {
             <SelectItem value={ALL_ASSIGNEES}>All assignees</SelectItem>
             {seededTeam.map((member) => (
               <SelectItem key={member.id} value={member.id}>
-                {member.displayName}
+                {resolveDisplayName(member)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -206,7 +212,7 @@ export default function Board() {
  */
 function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
   const member = findTeamMember(task.assignee);
-  const displayName = member?.displayName ?? '';
+  const displayName = member ? resolveDisplayName(member) : '';
   const initials = getInitials(displayName);
 
   return (

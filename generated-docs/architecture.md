@@ -15,6 +15,7 @@ listed here before building new. One row per durable thing; keep it terse.
 | `AppLayout` (the `(app)` shell) | `web/src/app/(app)/layout.tsx` | Shared authenticated shell every signed-in screen renders inside: header account menu (avatar + display name → Settings link + Sign out) and the signed-out route guard + bfcache guard (reuses `useAuth()`). New authenticated screens go under `web/src/app/(app)/`. |
 | `getTasks()` / `getTask(id)` / `createTask()` / `updateTask()` / `deleteTask()` / `TaskInput` / `TASKS_PATH` | `web/src/lib/api/tasks.ts` | Full Task CRUD through the API client (`GET`/`POST`/`PUT`/`DELETE` on `/v1/tasks`, `/v1/tasks/:id`). `TaskInput` = `Omit<Task,'id'>` (id generated on create). MSW serves them in `web/src/mocks/handlers.ts` from a mutable session store seeded from `seededTasks`. |
 | `getInitials()` | `web/src/lib/initials.ts` | Derive initials from a display name (first+last initial; single word → first two letters). Used by Board cards and the header avatar so the rule never drifts. |
+| `resolveDisplayName()` / `setDisplayNameOverride()` / `useDisplayNameOverrides()` | `web/src/lib/user/display-name-store.ts` | Session-scoped display-name override store (in-memory module singleton via `useSyncExternalStore`). `resolveDisplayName(user)` returns a saved override or the seeded name; Settings' Save calls `setDisplayNameOverride(id, name)`; the header, Board cards, and assignee filter call `useDisplayNameOverrides()` to re-render on rename (BR8/NFR-2). Resets on full page reload (mock-only). |
 
 ## Conventions
 
@@ -25,4 +26,4 @@ listed here before building new. One row per durable thing; keep it terse.
 ## Cross-epic debt
 
 - **Task store is session-scoped, not persisted.** MSW serves full Task CRUD from a mutable in-page store (`web/src/mocks/handlers.ts`) that survives SPA navigation (NFR-2) but resets on a full page reload — mock-only; a real backend replaces it.
-- **Display-name store is read-only.** The `(app)` shell resolves the signed-in user's display name from `seededTeam` by email; there is no mutable store yet, so a Settings rename (BR8/NFR-2) won't propagate until the Settings story adds a persistent mock display-name layer.
+- **Display-name persistence is in-memory only.** A Settings rename is recorded in `web/src/lib/user/display-name-store.ts` and propagates to the header, Board cards, and assignee filter across client navigation (BR8/NFR-2), but a full page reload resets it — mock-only, no backend. Persistence bypasses the HTTP client (like frontend-only auth) because there is no user endpoint; a real backend replaces the store with a `PUT`-backed API call.
