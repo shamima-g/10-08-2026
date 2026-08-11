@@ -65,13 +65,28 @@ async function signIn(page: Page): Promise<void> {
 }
 
 /**
- * The header's Settings control (resolved design choice: header avatar/link menu).
- * Accepts a link or a button so the spec does not over-fit one markup choice.
+ * Open the header account menu (resolved design choice: an avatar/account
+ * dropdown). Its Settings and Sign out controls live inside this menu, so it must
+ * be opened before either is clickable. The trigger is the single button inside the
+ * header's `Account` navigation landmark — scoping to that landmark keeps the
+ * locator stable without depending on the (renameable) display name it shows.
+ */
+async function openAccountMenu(page: Page): Promise<void> {
+  await page
+    .getByRole('navigation', { name: 'Account' })
+    .getByRole('button')
+    .click();
+}
+
+/**
+ * The account menu's Settings control. Rendered as a Radix menu item (role
+ * "menuitem") wrapping a Settings link; accept either role so the spec does not
+ * over-fit one markup choice. The account menu must be open first (openAccountMenu).
  */
 function settingsControl(page: Page) {
   return page
-    .getByRole('link', { name: /settings/i })
-    .or(page.getByRole('button', { name: /settings/i }));
+    .getByRole('menuitem', { name: /settings/i })
+    .or(page.getByRole('link', { name: /settings/i }));
 }
 
 /**
@@ -97,6 +112,7 @@ test.describe('Epic task-board, Story 3: Settings — set your display name', ()
   }) => {
     await signIn(page);
 
+    await openAccountMenu(page);
     await settingsControl(page).click();
 
     await expect(page).toHaveURL(SETTINGS_URL);
@@ -116,6 +132,7 @@ test.describe('Epic task-board, Story 3: Settings — set your display name', ()
     await expect(boardCard(page, 'Draft launch email')).toContainText('SR');
 
     // Rename via Settings.
+    await openAccountMenu(page);
     await settingsControl(page).click();
     await expect(page).toHaveURL(SETTINGS_URL);
     const nameField = page.getByLabel(/your display name/i);
@@ -168,6 +185,7 @@ test.describe('Epic task-board, Story 3: Settings — set your display name', ()
     page,
   }) => {
     await signIn(page);
+    await openAccountMenu(page);
     await settingsControl(page).click();
     await expect(page).toHaveURL(SETTINGS_URL);
     await expect(

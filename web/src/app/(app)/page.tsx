@@ -132,10 +132,12 @@ export default function Board() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        {/* Filter (top-left). Accessible name comes from the shown value — no
-            aria-label, which would conflict with the visible value (WCAG 2.5.3). */}
+        {/* Filter (top-left). A role="combobox" trigger does not take its
+            accessible name from its shown value, so name it explicitly (WCAG 4.1.2
+            button-name). 2.5.3 Label-in-Name does not apply — combobox has no
+            name-from-content, so there is no visible text label to conflict with. */}
         <Select value={assignee} onValueChange={setAssignee}>
-          <SelectTrigger className="w-56">
+          <SelectTrigger className="w-56" aria-label="Filter by assignee">
             <SelectValue placeholder="All assignees" />
           </SelectTrigger>
           <SelectContent>
