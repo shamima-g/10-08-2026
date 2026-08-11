@@ -1,34 +1,22 @@
-# TaskBoard — design notes
+# TaskBoard — updated design (Phase 2 / #15)
 
-A small team task board. These notes plus `mockup.html` and `tokens.css` in this folder are
-the **design** — build the app to match them. (Text reads most reliably; the mockup and tokens
-back it up.)
+This replaces the original `design-notes.md`. It changes only the **Board** and **Task detail**
+screens. **Settings is unchanged** — do not touch it.
 
-## Screens
+## Board (changed)
+- The primary action button is now labelled **Add task** (was "New task").
+- The **All assignees** filter moves from the top-left to the **top-right**, next to the button.
+- Empty column copy is unchanged: **Nothing here yet**.
 
-### Board
-The landing screen. Three columns — **To do**, **In progress**, **Done** — each holding task
-cards. A card shows the task **title** and its **assignee** initials.
+## Task detail (changed)
+- Add a **Priority** field: a dropdown with **Low / Medium / High**.
+- All other fields (Title, Assignee, Status, Due date) and the **Save changes** / **Delete task**
+  buttons are unchanged.
 
-- Primary action button, top-right: **New task**
-- A filter control, top-left, labelled **All assignees** (a dropdown).
-- Empty column copy: **Nothing here yet**
+## Settings (unchanged)
+No change.
 
-### Task detail
-Opens when a card is clicked. Shows and edits one task.
-
-- Fields: **Title** (text), **Assignee** (dropdown), **Status** (To do / In progress / Done),
-  **Due date** (date).
-- Buttons: **Save changes**, and a text link **Delete task**.
-
-### Settings
-- One field: **Your display name** (text), with a **Save** button.
-- Heading copy: **Your settings**
-
-## Palette & type
-Brand colours are in `tokens.css`. Primary is the blue used for buttons and the active column
-header. Body font is Inter.
-
-## Deliberately not specified
-The **due-date format** (e.g. `2026-05-01` vs `1 May 2026`) is not decided here — pick a sensible
-default and flag it so we can confirm.
+## Note on colour (intentional conflict)
+`tokens.css` in this update sets the primary colour to purple (`#7c3aed`). This **contradicts**
+the decision already recorded during the first build (primary is blue `#2563eb`). The workflow
+should not silently switch — it should ask which one wins.
