@@ -8,17 +8,20 @@
       "sign-in"
     ],
     "introducesSharedSurface": true,
-    "unverifiedAssumptions": [],
+    "unverifiedAssumptions": [
+      "The 'active' column given the blue heading is In progress (To do stays neutral, Done is green). The design only colours Done; the requirement says the active column header uses primary blue without naming which — confirm In progress is intended.",
+      "Until Settings ships, the header shows the signed-in person's name from the fixed seeded team (by email); renaming yourself won't update the header until Settings adds the saved-name store (resolved by Story 3)."
+    ],
     "manualTestResults": []
   },
   "phase": "BUILD",
   "stories": {
     "1": {
-      "status": "pending",
+      "status": "complete",
       "commit": null,
       "e2eStatus": "deferred",
-      "startedAt": null,
-      "completedAt": null
+      "startedAt": "2026-08-11T08:30:00Z",
+      "completedAt": "2026-08-11T08:55:00Z"
     },
     "2": {
       "status": "pending",

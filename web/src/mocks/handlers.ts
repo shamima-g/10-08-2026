@@ -8,28 +8,39 @@
  *
  * Regenerate with: /api-mock-refresh
  */
+import { http, HttpResponse } from 'msw';
+import { API_BASE_URL } from '@/lib/utils/constants';
+import { seededTasks } from './data/task';
+
 import type { HttpHandler } from 'msw';
 
 /**
- * Intentionally empty for now.
+ * Mock task endpoints (project.md §Data Source — mock-only, no backend).
  *
- * No OpenAPI spec exists yet (generated-docs/specs/api-spec.yaml) — this
- * project's data source is mock-only (project.md §Data Source & Backend
- * Integration) and the sign-in epic
- * (generated-docs/epics/sign-in/brief.md) validates credentials directly
- * against the mock data layer (web/src/mocks/data/user.ts,
- * web/src/mocks/data/identity.ts) with no REST call — see brief R2 ("no
- * backend call"). There is nothing to serve over HTTP for this epic.
+ * The Board reads its tasks through the API client (web/src/lib/api/tasks.ts),
+ * and these handlers intercept those calls IN THE BROWSER and serve the seeded
+ * task factory (web/src/mocks/data/task.ts) — the single source of truth both
+ * test layers share, never re-derived inline. Paths mirror the endpoint functions
+ * in web/src/lib/api/tasks.ts (`/v1/tasks`, `/v1/tasks/:id`), fully qualified with
+ * API_BASE_URL so MSW matches the absolute URL the client builds.
  *
- * The task-board epic will introduce the first REST endpoints (tasks
- * list, task detail, etc.). When it does, add their handlers here:
- *   - Compose the entity factories in web/src/mocks/data/ — never
- *     re-derive an entity's shape inline.
- *   - Compose the shared param-reading/pagination helpers from
- *     ./handler-utils (create that file at that point, per the
- *     mock-setup-agent conventions) rather than inlining query-param
- *     logic per handler.
- *   - Do not add an `if (MOCK_API)` branch — handlers only run while
- *     MSW is active (see MockProvider).
+ * Only the read endpoints this story needs are served here; create/edit/delete
+ * handlers are added by the Task-detail story that introduces those actions.
  */
-export const handlers: HttpHandler[] = [];
+const TASKS_URL = `${API_BASE_URL}/v1/tasks`;
+
+export const handlers: HttpHandler[] = [
+  // GET /v1/tasks — the full task list the Board groups by status.
+  http.get(TASKS_URL, () => {
+    return HttpResponse.json(seededTasks);
+  }),
+
+  // GET /v1/tasks/:id — a single task (Task detail).
+  http.get(`${TASKS_URL}/:id`, ({ params }) => {
+    const task = seededTasks.find((t) => t.id === params.id);
+    if (!task) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    return HttpResponse.json(task);
+  }),
+];
