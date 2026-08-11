@@ -8,28 +8,97 @@
  *
  * Regenerate with: /api-mock-refresh
  */
+import { http, HttpResponse } from 'msw';
+import { API_BASE_URL } from '@/lib/utils/constants';
+import { seededTasks } from './data/task';
+
 import type { HttpHandler } from 'msw';
+import type { Task, TaskStatus } from './data/task';
 
 /**
- * Intentionally empty for now.
+ * Mock task endpoints (project.md §Data Source — mock-only, no backend).
  *
- * No OpenAPI spec exists yet (generated-docs/specs/api-spec.yaml) — this
- * project's data source is mock-only (project.md §Data Source & Backend
- * Integration) and the sign-in epic
- * (generated-docs/epics/sign-in/brief.md) validates credentials directly
- * against the mock data layer (web/src/mocks/data/user.ts,
- * web/src/mocks/data/identity.ts) with no REST call — see brief R2 ("no
- * backend call"). There is nothing to serve over HTTP for this epic.
+ * The Board reads its tasks through the API client (web/src/lib/api/tasks.ts),
+ * and these handlers intercept those calls IN THE BROWSER and serve the seeded
+ * task factory (web/src/mocks/data/task.ts) — the single source of truth both
+ * test layers share, never re-derived inline. Paths mirror the endpoint functions
+ * in web/src/lib/api/tasks.ts (`/v1/tasks`, `/v1/tasks/:id`), fully qualified with
+ * API_BASE_URL so MSW matches the absolute URL the client builds.
  *
- * The task-board epic will introduce the first REST endpoints (tasks
- * list, task detail, etc.). When it does, add their handlers here:
- *   - Compose the entity factories in web/src/mocks/data/ — never
- *     re-derive an entity's shape inline.
- *   - Compose the shared param-reading/pagination helpers from
- *     ./handler-utils (create that file at that point, per the
- *     mock-setup-agent conventions) rather than inlining query-param
- *     logic per handler.
- *   - Do not add an `if (MOCK_API)` branch — handlers only run while
- *     MSW is active (see MockProvider).
+ * Full CRUD is served: GET (list + single), POST (create), PUT (edit / status
+ * move), DELETE. The mutable session store below is seeded from the canonical
+ * tasks and mutated in place, so a create / edit / move / delete is reflected on
+ * the Board's next GET within the same browser session — that is NFR-2 (state
+ * persists across client navigation, since MSW handlers run in the page and the
+ * store survives SPA navigation, resetting only on a full page reload).
  */
-export const handlers: HttpHandler[] = [];
+const TASKS_URL = `${API_BASE_URL}/v1/tasks`;
+
+/** Mutable, session-scoped copy of the seeded tasks (never mutate the canon). */
+const taskStore: Task[] = seededTasks.map((task) => ({ ...task }));
+/** Monotonic id source for created tasks within this session. */
+let nextTaskId = taskStore.length + 1;
+
+/** Shape of the create/edit request body sent by the Task-detail form. */
+interface TaskInputBody {
+  title?: string;
+  assignee?: string;
+  status?: TaskStatus;
+  dueDate?: string;
+}
+
+export const handlers: HttpHandler[] = [
+  // GET /v1/tasks — the full task list the Board groups by status.
+  http.get(TASKS_URL, () => {
+    return HttpResponse.json(taskStore);
+  }),
+
+  // GET /v1/tasks/:id — a single task (Task detail).
+  http.get(`${TASKS_URL}/:id`, ({ params }) => {
+    const task = taskStore.find((t) => t.id === params.id);
+    if (!task) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    return HttpResponse.json(task);
+  }),
+
+  // POST /v1/tasks — create a task; the store assigns its id (BR7).
+  http.post(TASKS_URL, async ({ request }) => {
+    const body = (await request.json()) as TaskInputBody;
+    const task: Task = {
+      id: `task-${nextTaskId++}`,
+      title: body.title ?? '',
+      assignee: body.assignee ?? '',
+      status: body.status ?? 'To do',
+      dueDate: body.dueDate ?? '',
+    };
+    taskStore.push(task);
+    return HttpResponse.json(task, { status: 201 });
+  }),
+
+  // PUT /v1/tasks/:id — persist edits, including a Status move (BR4/BR5).
+  http.put(`${TASKS_URL}/:id`, async ({ params, request }) => {
+    const index = taskStore.findIndex((t) => t.id === params.id);
+    if (index === -1) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    const body = (await request.json()) as TaskInputBody;
+    const updated: Task = {
+      ...taskStore[index],
+      ...body,
+      id: taskStore[index].id,
+    };
+    taskStore[index] = updated;
+    return HttpResponse.json(updated);
+  }),
+
+  // DELETE /v1/tasks/:id — remove a task (BR6). 204 No Content on success.
+  http.delete(`${TASKS_URL}/:id`, ({ params }) => {
+    const index = taskStore.findIndex((t) => t.id === params.id);
+    if (index === -1) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    taskStore.splice(index, 1);
+    return new HttpResponse(null, { status: 204 });
+  }),
+];

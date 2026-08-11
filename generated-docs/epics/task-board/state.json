@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "epic": {
+    "slug": "task-board",
+    "name": "Task board, task detail, and settings",
+    "createdAt": "2026-08-11T08:14:19.158Z",
+    "dependsOn": [
+      "sign-in"
+    ],
+    "introducesSharedSurface": true,
+    "unverifiedAssumptions": [
+      "The 'active' column given the blue heading is In progress (To do stays neutral, Done is green). The design only colours Done; the requirement says the active column header uses primary blue without naming which — confirm In progress is intended.",
+      "Until Settings ships, the header shows the signed-in person's name from the fixed seeded team (by email); renaming yourself won't update the header until Settings adds the saved-name store (resolved by Story 3).",
+      "A brand-new task defaults its Assignee to the signed-in team member (so the new card shows an owner/initials). The design doesn't specify a default — confirm you'd like it pre-filled to you rather than starting Unassigned.",
+      "The mock task store is in-memory: create/edit/move/delete persist while you navigate within a session, but a full browser refresh resets to the seeded starting tasks (no real backend yet).",
+      "Settings 'Save' shows a success toast and stays on the Settings page (it does not navigate back to the board) — confirm this is the desired feel."
+    ],
+    "manualTestResults": []
+  },
+  "phase": "COMPLETE-ON-BRANCH",
+  "stories": {
+    "1": {
+      "status": "complete",
+      "commit": null,
+      "e2eStatus": "passed-after-fix",
+      "startedAt": "2026-08-11T08:30:00Z",
+      "completedAt": "2026-08-11T08:55:00Z"
+    },
+    "2": {
+      "status": "complete",
+      "commit": null,
+      "e2eStatus": "passed-after-fix",
+      "startedAt": "2026-08-11T08:57:00Z",
+      "completedAt": "2026-08-11T09:10:00Z"
+    },
+    "3": {
+      "status": "complete",
+      "commit": null,
+      "e2eStatus": "passed-after-fix",
+      "startedAt": "2026-08-11T09:12:00Z",
+      "completedAt": "2026-08-11T09:25:00Z"
+    }
+  },
+  "halt": null,
+  "lastUpdated": "2026-08-11T08:14:19.158Z"
+}

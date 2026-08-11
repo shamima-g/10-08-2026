@@ -61,6 +61,19 @@ export const signInSchema = z.object({
 export type SignInInput = z.infer<typeof signInSchema>;
 
 /**
+ * Display-name schema (epic "task-board", Story 3, Settings).
+ *
+ * The one required field on Settings (resolved design choice): a display name must
+ * be present (BR8). Trimmed first so a whitespace-only entry counts as empty and is
+ * rejected with the same message.
+ */
+export const displayNameSchema = z.object({
+  displayName: z.string().trim().min(1, 'Display name is required'),
+});
+
+export type DisplayNameInput = z.infer<typeof displayNameSchema>;
+
+/**
  * User ID validation schema
  * Validates MongoDB ObjectId or UUID format
  */
