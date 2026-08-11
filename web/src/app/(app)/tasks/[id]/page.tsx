@@ -10,7 +10,7 @@
  * One screen serves BOTH flows (digest §Screens):
  *   - EDIT — opened from a Board card; the route id is the task id, loaded via the
  *     API client (`getTask` → `@/lib/api/client`, CLAUDE.md §2 — never `fetch()`).
- *   - CREATE — opened from the Board's "New task" button, which routes to the
+ *   - CREATE — opened from the Board's "Add task" button, which routes to the
  *     `/tasks/new` sentinel; the form starts empty with Status defaulting to
  *     "To do" (resolved design choice / BR7).
  *
