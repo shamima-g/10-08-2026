@@ -191,6 +191,14 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
   test('the task detail screen has no accessibility violations', async ({
     page,
   }) => {
+    // Disable Radix entrance animations (fade + zoom) for this scan. Without this,
+    // axe can analyze the delete-confirm dialog mid-entrance, while its content is
+    // still composited over the overlay tint — measuring a transient ~4.34 contrast
+    // for muted-foreground text that passes (~4.6) once the dialog settles on its
+    // solid popover background. Reduced motion makes the content reach its final
+    // opacity/background immediately, so the scan measures the true settled state.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+
     await signIn(page);
 
     // Empty create state.
@@ -206,9 +214,13 @@ test.describe('Epic task-board, Story 2: Task detail', () => {
     const edit = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
     expect(edit.violations).toEqual([]);
 
-    // Open delete-confirm dialog.
+    // Open delete-confirm dialog. Wait for it to be fully settled at final opacity
+    // (belt-and-braces alongside reduced motion) so axe scans the solid popover
+    // background, never a mid-animation composited one — no bare waitForTimeout.
     await page.getByRole('button', { name: /delete task/i }).click();
-    await expect(page.getByRole('alertdialog')).toBeVisible();
+    const alertDialog = page.getByRole('alertdialog');
+    await expect(alertDialog).toBeVisible();
+    await expect(alertDialog).toHaveCSS('opacity', '1');
     const dialog = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
     expect(dialog.violations).toEqual([]);
   });
