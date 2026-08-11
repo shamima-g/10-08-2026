@@ -38,6 +38,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { createTask, deleteTask, getTask, updateTask } from '@/lib/api/tasks';
 import { TASK_STATUSES, seededTeam, type TaskStatus } from '@/mocks/data/task';
+import {
+  resolveDisplayName,
+  useDisplayNameOverrides,
+} from '@/lib/user/display-name-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,6 +76,9 @@ export default function TaskDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { showToast } = useToast();
+  // Re-render the Assignee dropdown when the signed-in user renames themselves,
+  // so its option label reflects the new name too (BR8 — cards and dropdowns).
+  useDisplayNameOverrides();
 
   const rawId = params?.id;
   const id = Array.isArray(rawId) ? rawId[0] : (rawId ?? '');
@@ -244,7 +251,7 @@ export default function TaskDetailPage() {
             <SelectContent>
               {seededTeam.map((member) => (
                 <SelectItem key={member.id} value={member.id}>
-                  {member.displayName}
+                  {resolveDisplayName(member)}
                 </SelectItem>
               ))}
             </SelectContent>
