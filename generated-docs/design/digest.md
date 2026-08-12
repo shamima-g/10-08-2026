@@ -13,7 +13,9 @@ A single-page contact form: one screen served at the site root (`/`), with a nam
 
 ## Your Decisions
 
-*Nothing yet — this fills in as you settle things while we build.*
+- **Invalid-email error wording** (Contact screen) → "Enter a valid email address". The design only
+  supplied "This field is required" for empty fields; this settles the wording for a present-but-invalid
+  email. _(Stories approval, contact-form epic.)_
 
 ---
 
