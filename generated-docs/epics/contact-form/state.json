@@ -12,11 +12,11 @@
   "phase": "BUILD",
   "stories": {
     "1": {
-      "status": "pending",
+      "status": "complete",
       "commit": null,
       "e2eStatus": "deferred",
-      "startedAt": null,
-      "completedAt": null
+      "startedAt": "2026-08-12T07:25:30Z",
+      "completedAt": "2026-08-12T07:31:20Z"
     }
   },
   "halt": null,
