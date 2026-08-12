@@ -55,7 +55,7 @@ export default function HomePage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const updateField = (name: FieldName) => (value: string) => {
+  const updateField = (name: FieldName, value: string) => {
     setFields((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -95,7 +95,7 @@ export default function HomePage() {
                   name="name"
                   placeholder="Your name"
                   value={fields.name}
-                  onChange={(e) => updateField('name')(e.target.value)}
+                  onChange={(e) => updateField('name', e.target.value)}
                   aria-invalid={errors.name ? true : undefined}
                   aria-describedby={errors.name ? 'name-error' : undefined}
                 />
@@ -114,7 +114,7 @@ export default function HomePage() {
                   type="email"
                   placeholder="you@example.com"
                   value={fields.email}
-                  onChange={(e) => updateField('email')(e.target.value)}
+                  onChange={(e) => updateField('email', e.target.value)}
                   aria-invalid={errors.email ? true : undefined}
                   aria-describedby={errors.email ? 'email-error' : undefined}
                 />
@@ -132,7 +132,7 @@ export default function HomePage() {
                   name="message"
                   placeholder="How can we help?"
                   value={fields.message}
-                  onChange={(e) => updateField('message')(e.target.value)}
+                  onChange={(e) => updateField('message', e.target.value)}
                   aria-invalid={errors.message ? true : undefined}
                   aria-describedby={
                     errors.message ? 'message-error' : undefined
