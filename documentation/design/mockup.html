@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ContactPage — mockup</title>
+    <link rel="stylesheet" href="tokens.css" />
+  </head>
+  <body style="font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text)">
+    <!-- SCREEN: Contact (route /) -->
+    <main data-screen="contact">
+      <h1>Get in touch</h1>
+
+      <!-- Default state: the form -->
+      <form data-state="form">
+        <label>Name <input type="text" placeholder="Your name" required /></label>
+        <label>Email <input type="email" placeholder="you@example.com" required /></label>
+        <label>Message <textarea placeholder="How can we help?" required></textarea></label>
+        <p class="error" data-error hidden style="color: var(--color-error)">This field is required</p>
+        <button type="submit" style="background: var(--color-primary); color: #fff">Send message</button>
+      </form>
+
+      <!-- Success state: shown in place of the form after a valid submit -->
+      <p data-state="confirmation" hidden>Thanks, we'll be in touch.</p>
+    </main>
+  </body>
+</html>
