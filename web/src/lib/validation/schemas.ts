@@ -45,6 +45,31 @@ export const simplePasswordSchema = z
   .min(8, 'Password must be at least 8 characters');
 
 /**
+ * Sign-in form validation schema
+ *
+ * Front-end-only prototype (project.md PI-01): this validates only that both fields are
+ * present. The actual credential match against the single seeded user is done in
+ * SessionContext.signIn — there is no backend to defer to.
+ */
+export const signInSchema = z.object({
+  email: z.string().trim().min(1, 'Email is required'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+export type SignInInput = z.infer<typeof signInSchema>;
+
+/**
+ * Note text validation schema
+ *
+ * A note is the trimmed input and must be non-empty — a whitespace-only note trims to an
+ * empty string and is rejected the same as a fully empty field (Notes epic BR2).
+ */
+export const noteTextSchema = z
+  .string()
+  .trim()
+  .min(1, 'Please enter a note before adding.');
+
+/**
  * User ID validation schema
  * Validates MongoDB ObjectId or UUID format
  */

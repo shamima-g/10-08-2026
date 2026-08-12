@@ -1,10 +1,14 @@
-export default function HomePage() {
+import { AuthGate } from '@/components/auth/AuthGate';
+import { HomeScreen } from '@/components/home/HomeScreen';
+
+/**
+ * App root. Gates to the sign-in screen while signed out; shows the shared home shell
+ * once signed in. Replaces the starter welcome page (CLAUDE.md §6).
+ */
+export default function RootPage() {
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">Welcome</h1>
-      <p className="text-muted-foreground">
-        Replace this with your feature implementation.
-      </p>
-    </main>
+    <AuthGate>
+      <HomeScreen />
+    </AuthGate>
   );
 }
