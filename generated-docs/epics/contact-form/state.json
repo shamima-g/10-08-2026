@@ -9,12 +9,12 @@
     "unverifiedAssumptions": [],
     "manualTestResults": []
   },
-  "phase": "EPIC-END",
+  "phase": "COMPLETE-ON-BRANCH",
   "stories": {
     "1": {
       "status": "complete",
       "commit": null,
-      "e2eStatus": "deferred",
+      "e2eStatus": "passed",
       "startedAt": "2026-08-12T07:25:30Z",
       "completedAt": "2026-08-12T07:31:20Z"
     }
