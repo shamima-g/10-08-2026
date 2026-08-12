@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "epic": {
+    "slug": "notes",
+    "name": "Notes",
+    "createdAt": "2026-08-12T10:50:05.624Z",
+    "dependsOn": [],
+    "introducesSharedSurface": false,
+    "unverifiedAssumptions": [],
+    "manualTestResults": []
+  },
+  "phase": "PLAN",
+  "stories": {},
+  "halt": null,
+  "lastUpdated": "2026-08-12T10:50:05.624Z"
+}
